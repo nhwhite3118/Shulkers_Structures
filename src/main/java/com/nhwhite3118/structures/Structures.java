@@ -54,17 +54,17 @@ public class Structures {
 
     public static void generateSwampHut(Biome biome, String biomeNamespace, String biomePath) {
         if (biome.getCategory() == Category.SWAMP) {
-            biome.addFeature(Decoration.SURFACE_STRUCTURES, SWAMP_HUT.func_225566_b_(IFeatureConfig.NO_FEATURE_CONFIG)
-                    .func_227228_a_(Placement.NOPE.func_227446_a_(IPlacementConfig.NO_PLACEMENT_CONFIG)));
+            biome.addFeature(Decoration.SURFACE_STRUCTURES, SWAMP_HUT.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG)
+                    .withPlacement(Placement.NOPE.configure(IPlacementConfig.NO_PLACEMENT_CONFIG)));
         }
     }
 
     public static void generateTower(Biome biome, String biomeNamespace, String biomePath) {
         biome.addFeature(Decoration.SURFACE_STRUCTURES,
-                TOWER.func_225566_b_(IFeatureConfig.NO_FEATURE_CONFIG).func_227228_a_(Placement.NOPE.func_227446_a_(IPlacementConfig.NO_PLACEMENT_CONFIG)));
+                TOWER.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG).withPlacement(Placement.NOPE.configure(IPlacementConfig.NO_PLACEMENT_CONFIG)));
 
         if (biome.getCategory() == Category.EXTREME_HILLS || TOWER_BIOMES.containsKey(biome)) {
-            biome.func_226711_a_(TOWER.func_225566_b_(IFeatureConfig.NO_FEATURE_CONFIG));
+            biome.addStructure(TOWER.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG));
         }
     }
 }

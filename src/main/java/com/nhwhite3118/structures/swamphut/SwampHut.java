@@ -30,7 +30,7 @@ public class SwampHut extends Feature<NoFeatureConfig> {
 
     @Override
     public boolean place(IWorld world, ChunkGenerator<? extends GenerationSettings> changedBlock, Random rand, BlockPos position, NoFeatureConfig p_212245_5_) {
-        Rotation rotation = Rotation.func_222466_a(rand);
+        Rotation rotation = Rotation.randomRotation(rand);
         BlockPos.Mutable blockpos$Mutable = new BlockPos.Mutable();
         BlockPos.Mutable blockpos$MutableOffsetVector = new BlockPos.Mutable();
 
