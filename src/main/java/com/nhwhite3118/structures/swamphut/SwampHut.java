@@ -22,7 +22,7 @@ import net.minecraft.world.gen.feature.template.TemplateManager;
 import net.minecraft.world.server.ServerWorld;
 
 public class SwampHut extends Feature<NoFeatureConfig> {
-    private static ResourceLocation SWAMP_HUT_FILE = new ResourceLocation(ShulkersStructures.MODID + ":swamp_hut_weird_issues");
+    private static ResourceLocation SWAMP_HUT_FILE = new ResourceLocation(ShulkersStructures.MODID + ":swamp_hut");
 
     public SwampHut(Function<Dynamic<?>, ? extends NoFeatureConfig> config) {
         super(config);
@@ -39,7 +39,6 @@ public class SwampHut extends Feature<NoFeatureConfig> {
         int y = 62;
         int yDiff = y - position.getY();
 
-        boolean waterFound = false;
         boolean validPositionFound = false;
 
         // This is trying to do it the right way. I'll revisit it when I've had more sleep
@@ -59,19 +58,13 @@ public class SwampHut extends Feature<NoFeatureConfig> {
 //                }
 //            }
 //        }
-
-        for (int checkX = 20; checkX >= -20 && validPositionFound == false; checkX -= 2) {
-            for (int checkZ = 20; checkZ >= -20 && validPositionFound == false; checkZ -= 2) {
-                if (world.getBlockState(blockpos$Mutable.setPos(position.add(blockpos$MutableOffsetVector.setPos(checkX, yDiff, checkZ).rotate(rotation))))
-                        .getBlock() == Blocks.WATER) {
-                    if (world.getBlockState(new BlockPos(position.add(blockpos$MutableOffsetVector.setPos(checkX + 9, yDiff, checkZ - 14).rotate(rotation))))
-                            .getBlock() == Blocks.WATER) {
-                        // we probably hit land. maybe a ship or tree. w/e
-                        // if (outlineFits(world, blockpos$Mutable, rotation)) {
-                        validPositionFound = true;
-                        // }
-                    }
-                }
+        if (world.getBlockState(blockpos$Mutable.setPos(position.getX(), y, position.getZ())).getBlock() == Blocks.WATER) {
+            if (world.getBlockState(new BlockPos(position.add(blockpos$MutableOffsetVector.setPos(9, yDiff, 14).rotate(rotation))))
+                    .getBlock() == Blocks.WATER) {
+                // we probably hit land. maybe a ship or tree. w/e
+                // if (outlineFits(world, blockpos$Mutable, rotation)) {
+                validPositionFound = true;
+                // }
             }
         }
         // Checking all those blocks is expensive. We want to avoid ruining performance too badly
@@ -92,11 +85,11 @@ public class SwampHut extends Feature<NoFeatureConfig> {
         return true;
     }
 
-    private boolean outlineFits(IWorld world, BlockPos positionCandidate, Rotation rotation) {
-        boolean valid = (world.getBlockState(positionCandidate.add(new BlockPos(9, 0, 0).rotate(rotation))).getBlock() != Blocks.WATER
-                || world.getBlockState(positionCandidate.add(new BlockPos(8, 0, 0).rotate(rotation))).getBlock() != Blocks.WATER)
-                && (world.getBlockState(positionCandidate.add(new BlockPos(9, 0, -14).rotate(rotation))).getBlock() == Blocks.WATER
-                        || world.getBlockState(positionCandidate.add(new BlockPos(8, 0, -13).rotate(rotation))).getBlock() == Blocks.WATER);
-        return valid;
-    }
+//    private boolean outlineFits(IWorld world, BlockPos positionCandidate, Rotation rotation) {
+//        boolean valid = (world.getBlockState(positionCandidate.add(new BlockPos(9, 0, 0).rotate(rotation))).getBlock() != Blocks.WATER
+//                || world.getBlockState(positionCandidate.add(new BlockPos(8, 0, 0).rotate(rotation))).getBlock() != Blocks.WATER)
+//                && (world.getBlockState(positionCandidate.add(new BlockPos(9, 0, -14).rotate(rotation))).getBlock() == Blocks.WATER
+//                        || world.getBlockState(positionCandidate.add(new BlockPos(8, 0, -13).rotate(rotation))).getBlock() == Blocks.WATER);
+//        return valid;
+//    }
 }
