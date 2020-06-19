@@ -9,18 +9,23 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber
 public class ShulkersStructuresConfig {
     public static class ShulkersStructuresConfigValues {
-        public ConfigValueListener<Boolean> structureCanSpawn;
+        public ConfigValueListener<Boolean> towerCanSpawn;
+        public ConfigValueListener<Integer> towerSpawnrate;
 
         ShulkersStructuresConfigValues(ForgeConfigSpec.Builder builder, ConfigHelper.Subscriber subscriber) {
             builder.push("Feature Options");
 
-            builder.push("EndStructures");
+            builder.push("Structures");
 
-//            structureCanSpawn = subscriber.subscribe(builder
-//                    .comment("\r\n Whether or not to spawn Shulker Factories - End City inspired structures with a shulker spawner"
-//                            + "\r\n Default value is true")
-//                    .translation("repurposedstructures.config.feature.endStructures.addshulkerfactories").define("shulkerFactorys", true));
-//            builder.pop();
+            towerCanSpawn = subscriber.subscribe(builder.comment("\r\n Whether or not to spawn towers in extreme hills" + "\r\n Default value is true")
+                    .translation("shulkersstructures.config.feature.structures.towerCanSpawn").define("towerCanSpawn", true));
+
+            towerSpawnrate = subscriber.subscribe(builder
+                    .comment("\r\n How often towers will attempt to spawn per chunk in valid biomes."
+                            + "\r\n The chance of a towers generating at a chunk is 1/spawnrate."
+                            + "\r\n 10 to practically always have one in render distance, 1000 for extremely rare towers")
+                    .translation("nhwhite3118.config.structure.endStructures.towerSpawnrate").defineInRange("towerSpawnrate", 20, 10, 1000));
+            builder.pop();
 
             builder.pop();
         }

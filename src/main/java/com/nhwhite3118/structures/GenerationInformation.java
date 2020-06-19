@@ -9,10 +9,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.feature.structure.StructurePiece;
 import net.minecraft.world.gen.feature.template.TemplateManager;
 
-/*
- * To be used by ShulkerFactoryPieces. Stores a bunch of information so that I don't have to pass a million variables
- * through each method start calls, or use static variables and leak memory.
- */
 public class GenerationInformation {
     public int north_boundry;
     public int south_boundry;
@@ -26,8 +22,8 @@ public class GenerationInformation {
     public boolean lastGenerationSucceded = true;
     public ResourceLocation lastStructureAttempted;
 
-    GenerationInformation(int north, int south, int west, int east, BlockPos pos, Rotation rot,
-            List<StructurePiece> pieces, TemplateManager template, Random rand) {
+    public GenerationInformation(int north, int south, int west, int east, BlockPos pos, Rotation rot, List<StructurePiece> pieces, TemplateManager template,
+            Random rand) {
         north_boundry = north;
         south_boundry = south;
         west_boundry = west;

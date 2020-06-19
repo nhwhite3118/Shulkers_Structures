@@ -47,6 +47,7 @@ public class ShulkersStructures {
             String biomePath = biome.getRegistryName().getPath();
 
             Structures.generateSwampHut(biome, biomeNamespace, biomePath);
+            Structures.generateTower(biome, biomeNamespace, biomePath);
 //            if (Cobbler.CobblerConfig.spawnShulkerFactories.get()) {
 //                Structures.generateShulkerFactory(biome, biomeNamespace, biomePath);
 //            }
