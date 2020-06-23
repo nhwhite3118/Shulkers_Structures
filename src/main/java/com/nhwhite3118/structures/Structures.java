@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 import com.nhwhite3118.shulkersstructures.utils.RegUtil;
+import com.nhwhite3118.structures.barn.BarnStructure;
 import com.nhwhite3118.structures.swamphut.SwampHut;
 import com.nhwhite3118.structures.tower.TowerStructure;
 
@@ -26,23 +27,29 @@ import net.minecraftforge.registries.IForgeRegistry;
 public class Structures {
     public static Feature<NoFeatureConfig> SWAMP_HUT = new SwampHut(NoFeatureConfig::deserialize);
     public static Structure<NoFeatureConfig> TOWER = new TowerStructure(NoFeatureConfig::deserialize);
+    public static Structure<NoFeatureConfig> BARN = new BarnStructure(NoFeatureConfig::deserialize);
     public static IStructurePieceType FOR_REGISTERING_TOWER = com.nhwhite3118.structures.tower.TowerPieces.Piece::new;
-    public static Biome[] tower_biomes = { Biomes.JUNGLE_HILLS, Biomes.DESERT_HILLS, Biomes.GIANT_SPRUCE_TAIGA_HILLS, Biomes.DARK_FOREST_HILLS,
-            Biomes.DARK_FOREST, Biomes.MOUNTAINS, Biomes.SNOWY_TAIGA_MOUNTAINS, Biomes.SNOWY_TAIGA_MOUNTAINS, Biomes.TAIGA_MOUNTAINS, Biomes.WOODED_MOUNTAINS };
+    public static IStructurePieceType FOR_REGISTERING_BARN = com.nhwhite3118.structures.barn.BarnPieces.Piece::new;
+
     private static final Map<Biome, Boolean> TOWER_BIOMES = ImmutableMap.<Biome, Boolean>builder().put(Biomes.JUNGLE_HILLS, true).put(Biomes.DESERT_HILLS, true)
             .put(Biomes.GIANT_SPRUCE_TAIGA_HILLS, true).put(Biomes.DARK_FOREST_HILLS, true).put(Biomes.DARK_FOREST, true).put(Biomes.MOUNTAINS, true)
             .put(Biomes.SNOWY_TAIGA_MOUNTAINS, true).put(Biomes.TAIGA_MOUNTAINS, true).put(Biomes.WOODED_MOUNTAINS, true).build();
+
+    private static final Map<Category, Boolean> BARN_INVALID_BIOME_CATEGORIES = ImmutableMap.<Category, Boolean>builder().put(Category.THEEND, true)
+            .put(Category.NETHER, true).put(Category.OCEAN, true).put(Category.NONE, true).build();
 
     public static void registerFeatures(Register<Feature<?>> event) {
         IForgeRegistry<Feature<?>> registry = event.getRegistry();
 
         RegUtil.register(registry, Structures.SWAMP_HUT, "swamp_hut");
         RegUtil.register(registry, Structures.TOWER, "tower");
+        RegUtil.register(registry, Structures.BARN, "barn");
         Structures.registerStructures();
     }
 
     public static void registerStructures() {
         register(FOR_REGISTERING_TOWER, "SSTWR");
+        register(FOR_REGISTERING_BARN, "SSBRN");
     }
 
     /*
@@ -65,6 +72,15 @@ public class Structures {
 
         if (biome.getCategory() == Category.EXTREME_HILLS || TOWER_BIOMES.containsKey(biome)) {
             biome.addStructure(TOWER.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG));
+        }
+    }
+
+    public static void generateBarn(Biome biome, String biomeNamespace, String biomePath) {
+        biome.addFeature(Decoration.SURFACE_STRUCTURES,
+                BARN.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG).withPlacement(Placement.NOPE.configure(IPlacementConfig.NO_PLACEMENT_CONFIG)));
+
+        if (!BARN_INVALID_BIOME_CATEGORIES.containsKey(biome.getCategory())) {
+            biome.addStructure(BARN.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG));
         }
     }
 }
