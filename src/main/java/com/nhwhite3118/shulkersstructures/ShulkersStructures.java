@@ -49,13 +49,7 @@ public class ShulkersStructures {
             Structures.generateSwampHut(biome, biomeNamespace, biomePath);
             Structures.generateTower(biome, biomeNamespace, biomePath);
             Structures.generateBarn(biome, biomeNamespace, biomePath);
-//            if (Cobbler.CobblerConfig.spawnShulkerFactories.get()) {
-//                Structures.generateShulkerFactory(biome, biomeNamespace, biomePath);
-//            }
-//
-//            if (Cobbler.ENVIRONMENT == Cobbler.ENVIRONMENTS.DEBUG) {
-//                Structures.generateTestStructures(biome, biomeNamespace, biomePath);
-//            }
+            Structures.generateYakhchal(biome, biomeNamespace, biomePath);
         }
     }
 }

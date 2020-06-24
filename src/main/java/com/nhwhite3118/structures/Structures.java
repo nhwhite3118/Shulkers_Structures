@@ -8,6 +8,7 @@ import com.nhwhite3118.shulkersstructures.utils.RegUtil;
 import com.nhwhite3118.structures.barn.BarnStructure;
 import com.nhwhite3118.structures.swamphut.SwampHut;
 import com.nhwhite3118.structures.tower.TowerStructure;
+import com.nhwhite3118.structures.yakhchal.YakhchalStructure;
 
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
@@ -28,8 +29,10 @@ public class Structures {
     public static Feature<NoFeatureConfig> SWAMP_HUT = new SwampHut(NoFeatureConfig::deserialize);
     public static Structure<NoFeatureConfig> TOWER = new TowerStructure(NoFeatureConfig::deserialize);
     public static Structure<NoFeatureConfig> BARN = new BarnStructure(NoFeatureConfig::deserialize);
+    public static Structure<NoFeatureConfig> YAKHCHAL = new YakhchalStructure(NoFeatureConfig::deserialize);
     public static IStructurePieceType FOR_REGISTERING_TOWER = com.nhwhite3118.structures.tower.TowerPieces.Piece::new;
     public static IStructurePieceType FOR_REGISTERING_BARN = com.nhwhite3118.structures.barn.BarnPieces.Piece::new;
+    public static IStructurePieceType FOR_REGISTERING_YAKHCHAL = com.nhwhite3118.structures.yakhchal.YakhchalPieces.Piece::new;
 
     private static final Map<Biome, Boolean> TOWER_BIOMES = ImmutableMap.<Biome, Boolean>builder().put(Biomes.JUNGLE_HILLS, true).put(Biomes.DESERT_HILLS, true)
             .put(Biomes.GIANT_SPRUCE_TAIGA_HILLS, true).put(Biomes.DARK_FOREST_HILLS, true).put(Biomes.DARK_FOREST, true).put(Biomes.MOUNTAINS, true)
@@ -44,12 +47,14 @@ public class Structures {
         RegUtil.register(registry, Structures.SWAMP_HUT, "swamp_hut");
         RegUtil.register(registry, Structures.TOWER, "tower");
         RegUtil.register(registry, Structures.BARN, "barn");
+        RegUtil.register(registry, Structures.YAKHCHAL, "yakhchal");
         Structures.registerStructures();
     }
 
     public static void registerStructures() {
         register(FOR_REGISTERING_TOWER, "SSTWR");
         register(FOR_REGISTERING_BARN, "SSBRN");
+        register(FOR_REGISTERING_YAKHCHAL, "SSYKCHL");
     }
 
     /*
@@ -81,6 +86,15 @@ public class Structures {
 
         if (!BARN_INVALID_BIOME_CATEGORIES.containsKey(biome.getCategory())) {
             biome.addStructure(BARN.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG));
+        }
+    }
+
+    public static void generateYakhchal(Biome biome, String biomeNamespace, String biomePath) {
+        biome.addFeature(Decoration.SURFACE_STRUCTURES,
+                YAKHCHAL.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG).withPlacement(Placement.NOPE.configure(IPlacementConfig.NO_PLACEMENT_CONFIG)));
+
+        if (biome.getCategory() == Category.DESERT) {
+            biome.addStructure(YAKHCHAL.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG));
         }
     }
 }
