@@ -17,6 +17,9 @@ public class ShulkersStructuresConfig {
         public ConfigValueListener<Integer> yakhchalSpawnrate;
         public ConfigValueListener<Integer> drinkMeMushroomSpawnrate;
         public ConfigValueListener<Integer> redSandstoneWellSpawnrate;
+        public ConfigValueListener<Integer> leakingNetherPortalRuinSpawnrate;
+        public ConfigValueListener<Integer> abandonedEndHouseSpawnrate;
+        public ConfigValueListener<Integer> dangerousDirtHutSpawnrate;
 
         ShulkersStructuresConfigValues(ForgeConfigSpec.Builder builder, ConfigHelper.Subscriber subscriber) {
             builder.push("Feature Options");
@@ -64,6 +67,26 @@ public class ShulkersStructuresConfig {
                             + "\r\n The config value is the max distance in chunks between spawn attempts, but not all spawn attempts will succeed."
                             + "\r\n 10 to practically always have one in render distance, 10000 for extremely rare red sandstone wells")
                     .translation("nhwhite3118.config.feature.structures.redSandstoneWellSpawnrate").defineInRange("redSandstoneWellSpawnrate", 20, 10, 10000));
+
+            leakingNetherPortalRuinSpawnrate = subscriber.subscribe(builder
+                    .comment("\r\n How often ruined nether portals surrounded by nether blocks will attempt to spawn per chunk in valid biomes."
+                            + "\r\n The config value is the max distance in chunks between spawn attempts, but not all spawn attempts will succeed."
+                            + "\r\n 10 to practically always have one in render distance, 10000 for extremely rare red sandstone wells")
+                    .translation("nhwhite3118.config.feature.structures.leakingNetherPortalRuinSpawnrate")
+                    .defineInRange("leakingNetherPortalRuinSpawnrate", 40, 10, 10000));
+
+            abandonedEndHouseSpawnrate = subscriber.subscribe(builder
+                    .comment("\r\n How often small ruined buildings made of end stone will generate in the end."
+                            + "\r\n The config value is the max distance in chunks between spawn attempts, but not all spawn attempts will succeed."
+                            + "\r\n 10 to practically always have one in render distance, 10000 for extremely rare abandoned end houses")
+                    .translation("nhwhite3118.config.feature.structures.abandonedEndHouseSpawnrate")
+                    .defineInRange("abandonedEndHouseSpawnrate", 50, 10, 10000));
+
+            dangerousDirtHutSpawnrate = subscriber.subscribe(builder
+                    .comment("\r\n How often coarse dirt huts will spawn in valid biomes."
+                            + "\r\n The config value is the max distance in chunks between spawn attempts, but not all spawn attempts will succeed."
+                            + "\r\n 10 to practically always have one in render distance, 10000 for extremely rare abandoned end houses")
+                    .translation("nhwhite3118.config.feature.structures.dangerousDirtHutSpawnrate").defineInRange("dangerousDirtHutSpawnrate", 40, 10, 10000));
             builder.pop();
 
             builder.pop();

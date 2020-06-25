@@ -45,7 +45,23 @@ public class Structures {
 
             new SimpleStructure(NoFeatureConfig::deserialize, ShulkersStructures.Config.drinkMeMushroomSpawnrate.get(),
                     new ResourceLocation(ShulkersStructures.MODID + ":drink_me_mushroom"), -3, 681652976, "drinkmemushroom",
-                    new Biome[] { Biomes.DARK_FOREST, Biomes.DARK_FOREST_HILLS }, new Category[] { Category.MUSHROOM }, Decoration.SURFACE_STRUCTURES) };
+                    new Biome[] { Biomes.DARK_FOREST, Biomes.DARK_FOREST_HILLS }, new Category[] { Category.MUSHROOM }, Decoration.SURFACE_STRUCTURES),
+
+            new SimpleStructure(NoFeatureConfig::deserialize, ShulkersStructures.Config.leakingNetherPortalRuinSpawnrate.get(),
+                    new ResourceLocation(ShulkersStructures.MODID + ":leaking_nether_portal_ruin"), -4, 786268326, "leakingnetherportalruin",
+                    new Biome[] { Biomes.DARK_FOREST, Biomes.DARK_FOREST_HILLS },
+                    new Category[] { Category.DESERT, Category.EXTREME_HILLS, Category.FOREST, Category.ICY, Category.JUNGLE, Category.SWAMP, Category.PLAINS,
+                            Category.TAIGA, Category.MESA },
+                    Decoration.SURFACE_STRUCTURES),
+
+            new SimpleStructure(NoFeatureConfig::deserialize, ShulkersStructures.Config.abandonedEndHouseSpawnrate.get(),
+                    new ResourceLocation(ShulkersStructures.MODID + ":abandoned_end_house"), -3, 524985498, "abandonedendhouse",
+                    new Biome[] { Biomes.END_HIGHLANDS, Biomes.END_MIDLANDS }, new Category[] {}, Decoration.SURFACE_STRUCTURES),
+
+            new SimpleStructure(NoFeatureConfig::deserialize, ShulkersStructures.Config.dangerousDirtHutSpawnrate.get(),
+                    new ResourceLocation(ShulkersStructures.MODID + ":dangerous_dirt_hut"), -2, 854815645, "dangerousdirthut", new Biome[] {},
+                    new Category[] { Category.PLAINS, Category.EXTREME_HILLS, Category.FOREST, Category.MUSHROOM, Category.JUNGLE },
+                    Decoration.SURFACE_STRUCTURES) };
 
     private static final Map<Biome, Boolean> TOWER_BIOMES = ImmutableMap.<Biome, Boolean>builder().put(Biomes.JUNGLE_HILLS, true).put(Biomes.DESERT_HILLS, true)
             .put(Biomes.GIANT_SPRUCE_TAIGA_HILLS, true).put(Biomes.DARK_FOREST_HILLS, true).put(Biomes.DARK_FOREST, true).put(Biomes.MOUNTAINS, true)
