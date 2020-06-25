@@ -47,15 +47,16 @@ public class ShulkersStructures {
             String biomePath = biome.getRegistryName().getPath();
 
             Structures.generateSwampHut(biome, biomeNamespace, biomePath);
-            Structures.generateTower(biome, biomeNamespace, biomePath);
-            Structures.generateBarn(biome, biomeNamespace, biomePath);
-//            if (Cobbler.CobblerConfig.spawnShulkerFactories.get()) {
-//                Structures.generateShulkerFactory(biome, biomeNamespace, biomePath);
-//            }
-//
-//            if (Cobbler.ENVIRONMENT == Cobbler.ENVIRONMENTS.DEBUG) {
-//                Structures.generateTestStructures(biome, biomeNamespace, biomePath);
-//            }
+            if (Config.towerCanSpawn.get()) {
+                Structures.generateTower(biome, biomeNamespace, biomePath);
+            }
+            if (Config.barnCanSpawn.get()) {
+                Structures.generateBarn(biome, biomeNamespace, biomePath);
+            }
+            if (Config.yakhchalCanSpawn.get()) {
+                Structures.generateYakhchal(biome, biomeNamespace, biomePath);
+            }
+            Structures.generateSimpleStructures(biome, biomeNamespace, biomePath);
         }
     }
 }
