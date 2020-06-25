@@ -1,15 +1,19 @@
 package com.nhwhite3118.structures;
 
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
+import com.nhwhite3118.shulkersstructures.ShulkersStructures;
 import com.nhwhite3118.shulkersstructures.utils.RegUtil;
 import com.nhwhite3118.structures.barn.BarnStructure;
+import com.nhwhite3118.structures.simplestructure.SimpleStructure;
 import com.nhwhite3118.structures.swamphut.SwampHut;
 import com.nhwhite3118.structures.tower.TowerStructure;
 import com.nhwhite3118.structures.yakhchal.YakhchalStructure;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biome.Category;
@@ -33,6 +37,15 @@ public class Structures {
     public static IStructurePieceType FOR_REGISTERING_TOWER = com.nhwhite3118.structures.tower.TowerPieces.Piece::new;
     public static IStructurePieceType FOR_REGISTERING_BARN = com.nhwhite3118.structures.barn.BarnPieces.Piece::new;
     public static IStructurePieceType FOR_REGISTERING_YAKHCHAL = com.nhwhite3118.structures.yakhchal.YakhchalPieces.Piece::new;
+    public static IStructurePieceType FOR_REGISTERING_SIMPLE_STRUCTURES = com.nhwhite3118.structures.simplestructure.SimpleStructurePieces.Piece::new;
+    public static SimpleStructure[] SIMPLE_STRUCTURES = {
+            new SimpleStructure(NoFeatureConfig::deserialize, ShulkersStructures.Config.redSandstoneWellSpawnrate.get(),
+                    new ResourceLocation(ShulkersStructures.MODID + ":red_sandstone_well"), 0, 543842548, "redsandstonewell", new Biome[] {},
+                    new Category[] { Category.DESERT }, Decoration.SURFACE_STRUCTURES),
+
+            new SimpleStructure(NoFeatureConfig::deserialize, ShulkersStructures.Config.drinkMeMushroomSpawnrate.get(),
+                    new ResourceLocation(ShulkersStructures.MODID + ":drink_me_mushroom"), -3, 681652976, "drinkmemushroom",
+                    new Biome[] { Biomes.DARK_FOREST, Biomes.DARK_FOREST_HILLS }, new Category[] { Category.MUSHROOM }, Decoration.SURFACE_STRUCTURES) };
 
     private static final Map<Biome, Boolean> TOWER_BIOMES = ImmutableMap.<Biome, Boolean>builder().put(Biomes.JUNGLE_HILLS, true).put(Biomes.DESERT_HILLS, true)
             .put(Biomes.GIANT_SPRUCE_TAIGA_HILLS, true).put(Biomes.DARK_FOREST_HILLS, true).put(Biomes.DARK_FOREST, true).put(Biomes.MOUNTAINS, true)
@@ -48,13 +61,13 @@ public class Structures {
         RegUtil.register(registry, Structures.TOWER, "tower");
         RegUtil.register(registry, Structures.BARN, "barn");
         RegUtil.register(registry, Structures.YAKHCHAL, "yakhchal");
-        Structures.registerStructures();
-    }
 
-    public static void registerStructures() {
-        register(FOR_REGISTERING_TOWER, "SSTWR");
-        register(FOR_REGISTERING_BARN, "SSBRN");
-        register(FOR_REGISTERING_YAKHCHAL, "SSYKCHL");
+        for (SimpleStructure structure : SIMPLE_STRUCTURES) {
+            RegUtil.register(registry, structure, structure.StructureName);
+            // register(FOR_REGISTERING_SIMPLE_STRUCTURES, structure.StructureName);
+        }
+        register(FOR_REGISTERING_SIMPLE_STRUCTURES, "simplestructure");
+        Structures.registerStructures();
     }
 
     /*
@@ -62,6 +75,12 @@ public class Structures {
      */
     private static IStructurePieceType register(IStructurePieceType structurePiece, String key) {
         return Registry.register(Registry.STRUCTURE_PIECE, key.toLowerCase(Locale.ROOT), structurePiece);
+    }
+
+    public static void registerStructures() {
+        register(FOR_REGISTERING_TOWER, "SSTWR");
+        register(FOR_REGISTERING_BARN, "SSBRN");
+        register(FOR_REGISTERING_YAKHCHAL, "SSYKCHL");
     }
 
     public static void generateSwampHut(Biome biome, String biomeNamespace, String biomePath) {
@@ -96,5 +115,16 @@ public class Structures {
         if (biome.getCategory() == Category.DESERT) {
             biome.addStructure(YAKHCHAL.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG));
         }
+    }
+
+    public static void generateSimpleStructures(Biome biome, String biomeNamespace, String biomePath) {
+        for (SimpleStructure structure : SIMPLE_STRUCTURES) {
+            biome.addFeature(structure.DECORATOR, structure.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG)
+                    .withPlacement(Placement.NOPE.configure(IPlacementConfig.NO_PLACEMENT_CONFIG)));
+            if (Arrays.asList(structure.VALID_BIOMES).contains(biome) || Arrays.asList(structure.VALID_BIOME_CATEGORIES).contains(biome.getCategory())) {
+                biome.addStructure(structure.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG));
+            }
+        }
+
     }
 }
