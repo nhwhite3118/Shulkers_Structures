@@ -76,10 +76,19 @@ public class BarnStructure extends Structure<NoFeatureConfig> {
         int j = chunkPosZ >> 4;
         rand.setSeed((long) (i ^ j << 4) ^ p_230363_3_);
         rand.nextInt();
-        for (int k = chunkPosX - 10; k <= chunkPosX + 10; ++k) {
-            for (int l = chunkPosZ - 10; l <= chunkPosZ + 10; ++l) {
+//        for (int k = chunkPosX - 5; k <= chunkPosX + 5; ++k) {
+//            for (int l = chunkPosZ - 5; l <= chunkPosZ + 5; ++l) {
+//                ChunkPos chunkpos = Structure.field_236381_q_.func_236392_a_(chunkGen.func_235957_b_().func_236197_a_(Structure.field_236381_q_), p_230363_3_,
+//                        rand, k, l);
+//                if (k == chunkpos.x && l == chunkpos.z) {
+//                    return false;
+//                }
+//            }
+//        }
+        for (int k = chunkPosX - 8; k <= chunkPosX + 8; ++k) {
+            for (int l = chunkPosZ - 8; l <= chunkPosZ + 8; ++l) {
                 // skip the center; we want to be on the outskirts
-                if ((k > chunkPosX - 5 && k < chunkPosX + 5) && (l > chunkPosZ - 5 && l < chunkPosZ + 5)) {
+                if ((k >= chunkPosX - 5 && k <= chunkPosX + 5) && (l >= chunkPosZ - 5 && l <= chunkPosZ + 5)) {
                     continue;
                 }
                 ChunkPos chunkpos = Structure.field_236381_q_.func_236392_a_(chunkGen.func_235957_b_().func_236197_a_(Structure.field_236381_q_), p_230363_3_,

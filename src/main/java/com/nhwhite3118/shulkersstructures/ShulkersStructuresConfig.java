@@ -30,7 +30,7 @@ public class ShulkersStructuresConfig {
                     .translation("shulkersstructures.config.feature.structures.towerCanSpawn").define("towerCanSpawn", true));
 
             towerSpawnrate = subscriber.subscribe(builder
-                    .comment("\r\n How often towers will attempt to spawn per chunk in valid biomes."
+                    .comment("\r\n How many chunks apart towers will attempt to spawn."
                             + "\r\n The config value is the max distance in chunks between spawn attempts, but not all spawn attempts will succeed."
                             + "\r\n 10 to practically always have one in render distance, 10000 for extremely rare towers")
                     .translation("nhwhite3118.config.structure.endStructures.towerSpawnrate").defineInRange("towerSpawnrate", 20, 10, 10000));
@@ -39,11 +39,13 @@ public class ShulkersStructuresConfig {
                     .translation("shulkersstructures.config.feature.structures.barnCanSpawn").define("barnCanSpawn", true));
 
             barnSpawnrate = subscriber.subscribe(builder
-                    .comment("\r\n How often barns will attempt to spawn per chunk in valid biomes."
+                    .comment("\r\n How many chunks apart barns will spawn."
                             + "\r\n The config value is the max distance in chunks between spawn attempts, but not all spawn attempts will succeed."
-                            + "\r\n The barn is around a chunk in length, so lowering this too much can make barns more likely to collide."
+                            + "\r\n Barns hurt performance a lot because of the village check, so keep this value high if your computer's not great"
+                            + "\r\n Some barns in 1.16 seem to be appearing in clumps away from villages; best I can tell if the villages fail to spawn"
+                            + "\r\n but it still counts for pillager outposts, and by extention barns"
                             + "\r\n 5 to practically always have several near each village, 10000 for extremely rare barns")
-                    .translation("nhwhite3118.config.structure.endStructures.barnSpawnrate").defineInRange("barnSpawnrate", 10, 5, 10000));
+                    .translation("nhwhite3118.config.structure.endStructures.barnSpawnrate").defineInRange("barnSpawnrate", 20, 5, 10000));
 
             yakhchalCanSpawn = subscriber.subscribe(builder
                     .comment("\r\n Whether or not to spawn yakhchals, ancient buildings designed to use wind to keep ice frozen, in desert biomes"
