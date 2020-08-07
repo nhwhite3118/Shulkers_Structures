@@ -1,25 +1,20 @@
 package com.nhwhite3118.structures.simplestructure;
 
-import java.util.Random;
-import java.util.function.Function;
-
 import org.apache.logging.log4j.Level;
 
-import com.mojang.datafixers.Dynamic;
+import com.mojang.serialization.Codec;
 import com.nhwhite3118.shulkersstructures.ShulkersStructures;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
-import net.minecraft.util.SharedSeedRandom;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biome.Category;
-import net.minecraft.world.biome.BiomeManager;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.GenerationStage.Decoration;
 import net.minecraft.world.gen.Heightmap;
+import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.gen.feature.structure.StructureStart;
@@ -36,9 +31,9 @@ public class SimpleStructure extends Structure<NoFeatureConfig> {
     public Category[] VALID_BIOME_CATEGORIES;
     public Decoration DECORATOR;
 
-    public SimpleStructure(Function<Dynamic<?>, ? extends NoFeatureConfig> config, int spawnRate, ResourceLocation resource, int yOffset, int seed,
-            String structureName, Biome[] validBiomes, Category[] validCategories, Decoration decorator) {
-        super(config);
+    public SimpleStructure(Codec<NoFeatureConfig> codec, int spawnRate, ResourceLocation resource, int yOffset, int seed, String structureName,
+            Biome[] validBiomes, Category[] validCategories, Decoration decorator) {
+        super(codec);
         SpawnRate = spawnRate;
         resources = new ResourceLocation[] { resource };
         yOffsets = new int[] { yOffset };
@@ -49,30 +44,8 @@ public class SimpleStructure extends Structure<NoFeatureConfig> {
         DECORATOR = decorator;
     }
 
-    /*
-     * Determines the valid chunks that this structure can spawn in.
-     * 
-     * This is using vanilla's default algorithm to determine chunks that this structure can spawn in.
-     */
-    @Override
-    protected ChunkPos getStartPositionForPosition(ChunkGenerator<?> chunkGenerator, Random random, int x, int z, int spacingOffsetsX, int spacingOffsetsZ) {
-        int maxDistance = this.SpawnRate;
-        int minDistance = (int) (maxDistance * 0.75f);
-
-        int xTemp = x + maxDistance * spacingOffsetsX;
-        int ztemp = z + maxDistance * spacingOffsetsZ;
-        int xTemp2 = xTemp < 0 ? xTemp - maxDistance + 1 : xTemp;
-        int zTemp2 = ztemp < 0 ? ztemp - maxDistance + 1 : ztemp;
-        int validChunkX = xTemp2 / maxDistance;
-        int validChunkZ = zTemp2 / maxDistance;
-
-        ((SharedSeedRandom) random).setLargeFeatureSeedWithSalt(chunkGenerator.getSeed(), validChunkX, validChunkZ, this.getSeedModifier());
-        validChunkX = validChunkX * maxDistance;
-        validChunkZ = validChunkZ * maxDistance;
-        validChunkX = validChunkX + random.nextInt(maxDistance - minDistance);
-        validChunkZ = validChunkZ + random.nextInt(maxDistance - minDistance);
-
-        return new ChunkPos(validChunkX, validChunkZ);
+    public int getSpawnRate() {
+        return SpawnRate;
     }
 
     /*
@@ -84,14 +57,6 @@ public class SimpleStructure extends Structure<NoFeatureConfig> {
     @Override
     public String getStructureName() {
         return ShulkersStructures.MODID + ":" + this.StructureName;
-    }
-
-    /*
-     * This seems to be unused but cannot be removed. Just return 0 is all you need to do.
-     */
-    @Override
-    public int getSize() {
-        return 0;
     }
 
     /*
@@ -112,32 +77,8 @@ public class SimpleStructure extends Structure<NoFeatureConfig> {
         return Seed;
     }
 
-    /*
-     * This is where all the checks will be done to determine if the structure can spawn here.
-     * 
-     * Notice how the biome is also passed in. While you could do manual checks on the biome to see if you can spawn here, that is highly discouraged. Instead,
-     * you should do the biome check in the FMLCommonSetupEvent event (setup method in StructureTutorialMain) and add your structure to the biome with
-     * .addFeature and .addStructure methods.
-     * 
-     * Instead, this method is best used for determining if the chunk position itself is valid, if certain other structures are too close or not, or some other
-     * restrictive condition.
-     *
-     * For example, Pillager Outposts added a check to make sure it cannot spawn within 10 chunk of a Village. (Bedrock Edition seems to not have the same
-     * check)
-     */
-    @Override
-    public boolean func_225558_a_(BiomeManager biomeManager, ChunkGenerator<?> chunkGen, Random rand, int chunkPosX, int chunkPosZ, Biome biome) {
-        ChunkPos chunkpos = this.getStartPositionForPosition(chunkGen, rand, chunkPosX, chunkPosZ, 0, 0);
-
-        // Checks to see if current chunk is valid to spawn in.
-        if (chunkPosX == chunkpos.x && chunkPosZ == chunkpos.z) {
-            // Checks if the biome can spawn this structure.
-            if (chunkGen.hasStructure(biome, this)) {
-                return true;
-            }
-        }
-
-        return false;
+    public int getSeed() {
+        return Seed;
     }
 
     /*
@@ -149,7 +90,7 @@ public class SimpleStructure extends Structure<NoFeatureConfig> {
         }
 
         @Override
-        public void init(ChunkGenerator<?> generator, TemplateManager templateManagerIn, int chunkX, int chunkZ, Biome biomeIn) {
+        public void func_230364_a_(ChunkGenerator generator, TemplateManager templateManagerIn, int chunkX, int chunkZ, Biome biomeIn, IFeatureConfig config) {
             // Check out vanilla's WoodlandMansionStructure for how they offset the x and z
             // so that they get the y value of the land at the mansion's entrance, no matter
             // which direction the mansion is rotated.

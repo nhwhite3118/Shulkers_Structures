@@ -15,6 +15,6 @@ public final class ModEventSubscriber {
 
     @SubscribeEvent
     public static void onRegisterFeatures(final RegistryEvent.Register<Feature<?>> event) {
-        Structures.registerFeatures(event);
+        Structures.registerStructures(event);
     }
 }

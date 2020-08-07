@@ -1,11 +1,8 @@
 package com.nhwhite3118.structures.barn;
 
-import java.util.Random;
-import java.util.function.Function;
-
 import org.apache.logging.log4j.Level;
 
-import com.mojang.datafixers.Dynamic;
+import com.mojang.serialization.Codec;
 import com.nhwhite3118.shulkersstructures.ShulkersStructures;
 
 import net.minecraft.util.Rotation;
@@ -14,10 +11,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeManager;
+import net.minecraft.world.biome.provider.BiomeProvider;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.Heightmap;
-import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.gen.feature.structure.StructureStart;
@@ -25,37 +22,8 @@ import net.minecraft.world.gen.feature.template.TemplateManager;
 
 public class BarnStructure extends Structure<NoFeatureConfig> {
 
-    public BarnStructure(Function<Dynamic<?>, ? extends NoFeatureConfig> config) {
-        super(config);
-    }
-
-    /*
-     * Determines the valid chunks that this structure can spawn in.
-     * 
-     * This is using vanilla's default algorithm to determine chunks that this structure can spawn in.
-     */
-    @Override
-    protected ChunkPos getStartPositionForPosition(ChunkGenerator<?> chunkGenerator, Random random, int x, int z, int spacingOffsetsX, int spacingOffsetsZ) {
-        // ~10 end cities generate in a 200x200 chunk square. Factories should be ~10x
-        // rarer
-
-        int maxDistance = ShulkersStructures.Config.barnSpawnrate.get();
-        int minDistance = (int) (maxDistance * 0.75f);
-
-        int xTemp = x + maxDistance * spacingOffsetsX;
-        int ztemp = z + maxDistance * spacingOffsetsZ;
-        int xTemp2 = xTemp < 0 ? xTemp - maxDistance + 1 : xTemp;
-        int zTemp2 = ztemp < 0 ? ztemp - maxDistance + 1 : ztemp;
-        int validChunkX = xTemp2 / maxDistance;
-        int validChunkZ = zTemp2 / maxDistance;
-
-        ((SharedSeedRandom) random).setLargeFeatureSeedWithSalt(chunkGenerator.getSeed(), validChunkX, validChunkZ, this.getSeedModifier());
-        validChunkX = validChunkX * maxDistance;
-        validChunkZ = validChunkZ * maxDistance;
-        validChunkX = validChunkX + random.nextInt(maxDistance - minDistance);
-        validChunkZ = validChunkZ + random.nextInt(maxDistance - minDistance);
-
-        return new ChunkPos(validChunkX, validChunkZ);
+    public BarnStructure(Codec<NoFeatureConfig> codec) {
+        super(codec);
     }
 
     /*
@@ -67,14 +35,6 @@ public class BarnStructure extends Structure<NoFeatureConfig> {
     @Override
     public String getStructureName() {
         return ShulkersStructures.MODID + ":barn";
-    }
-
-    /*
-     * This seems to be unused but cannot be removed. Just return 0 is all you need to do.
-     */
-    @Override
-    public int getSize() {
-        return 0;
     }
 
     /*
@@ -109,52 +69,24 @@ public class BarnStructure extends Structure<NoFeatureConfig> {
      * check)
      */
     @Override
-    public boolean func_225558_a_(BiomeManager biomeManager, ChunkGenerator<?> chunkGen, Random rand, int chunkPosX, int chunkPosZ, Biome biome) {
-        ChunkPos chunkpos = this.getStartPositionForPosition(chunkGen, rand, chunkPosX, chunkPosZ, 0, 0);
-
-        // Checks to see if current chunk is valid to spawn in.
-        if (chunkPosX == chunkpos.x && chunkPosZ == chunkpos.z) {
-            // Checks if the biome can spawn this structure.
-            if (!chunkGen.hasStructure(biome, this)) {
-                return false;
-            }
-
-            // Almost the inverse of the pillager outpost code; there has to be a village within 10 chunks, but not within 5 chunks
-            if (chunkGen.hasStructure(biome, this)) {
-                for (int k = chunkPosX - 10; k <= chunkPosX - 5; ++k) {
-                    for (int l = chunkPosZ - 10; l <= chunkPosZ - 5; ++l) {
-                        if (Feature.VILLAGE.func_225558_a_(biomeManager, chunkGen, rand, k, l,
-                                biomeManager.getBiome(new BlockPos((k << 4) + 9, 0, (l << 4) + 9)))) {
-                            return true;
-                        }
-                    }
-                    for (int l = chunkPosZ + 5; l <= chunkPosZ + 10; ++l) {
-                        if (Feature.VILLAGE.func_225558_a_(biomeManager, chunkGen, rand, k, l,
-                                biomeManager.getBiome(new BlockPos((k << 4) + 9, 0, (l << 4) + 9)))) {
-                            return true;
-                        }
-                    }
+    public boolean func_230363_a_(ChunkGenerator chunkGen, BiomeProvider biomeManager, long p_230363_3_, SharedSeedRandom rand, int chunkPosX, int chunkPosZ,
+            Biome biome, ChunkPos p_230363_9_, NoFeatureConfig p_230363_10_) {
+        // Almost the inverse of the pillager outpost code; there has to be a village within 10 chunks, but not within 5 chunks
+        int i = chunkPosX >> 4;
+        int j = chunkPosZ >> 4;
+        rand.setSeed((long) (i ^ j << 4) ^ p_230363_3_);
+        rand.nextInt();
+        for (int k = chunkPosX - 10; k <= chunkPosX + 10; ++k) {
+            for (int l = chunkPosZ - 10; l <= chunkPosZ + 10; ++l) {
+                // skip the center; we want to be on the outskirts
+                if ((k > chunkPosX - 5 && k < chunkPosX + 5) && (l > chunkPosZ - 5 && l < chunkPosZ + 5)) {
+                    continue;
                 }
-
-                return false;
-            }
-            if (chunkGen.hasStructure(biome, this)) {
-                for (int k = chunkPosX + 5; k <= chunkPosX + 10; ++k) {
-                    for (int l = chunkPosZ - 10; l <= chunkPosZ - 5; ++l) {
-                        if (Feature.VILLAGE.func_225558_a_(biomeManager, chunkGen, rand, k, l,
-                                biomeManager.getBiome(new BlockPos((k << 4) + 9, 0, (l << 4) + 9)))) {
-                            return true;
-                        }
-                    }
-                    for (int l = chunkPosZ + 5; l <= chunkPosZ + 10; ++l) {
-                        if (Feature.VILLAGE.func_225558_a_(biomeManager, chunkGen, rand, k, l,
-                                biomeManager.getBiome(new BlockPos((k << 4) + 9, 0, (l << 4) + 9)))) {
-                            return true;
-                        }
-                    }
+                ChunkPos chunkpos = Structure.field_236381_q_.func_236392_a_(chunkGen.func_235957_b_().func_236197_a_(Structure.field_236381_q_), p_230363_3_,
+                        rand, k, l);
+                if (k == chunkpos.x && l == chunkpos.z) {
+                    return true;
                 }
-
-                return false;
             }
         }
 
@@ -170,7 +102,7 @@ public class BarnStructure extends Structure<NoFeatureConfig> {
         }
 
         @Override
-        public void init(ChunkGenerator<?> generator, TemplateManager templateManagerIn, int chunkX, int chunkZ, Biome biomeIn) {
+        public void func_230364_a_(ChunkGenerator generator, TemplateManager templateManagerIn, int chunkX, int chunkZ, Biome biomeIn, IFeatureConfig config) {
             // Check out vanilla's WoodlandMansionStructure for how they offset the x and z
             // so that they get the y value of the land at the mansion's entrance, no matter
             // which direction the mansion is rotated.
